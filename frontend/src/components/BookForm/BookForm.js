@@ -16,7 +16,7 @@ const BookForm = () => {
     const randomBook = booksData[randomIndex];
 
     //додавання до обєкту нового свойства
-    const randomBookWithId = createBookWithID(randomBook);
+    const randomBookWithId = createBookWithID(randomBook, 'random');
 
     dispatch(addBook(randomBookWithId));
   };
@@ -25,7 +25,7 @@ const BookForm = () => {
     e.preventDefault();
     if (title && author) {
       // dispatch action
-      const book = createBookWithID({ title, author });
+      const book = createBookWithID({ title, author }, 'manual');
       dispatch(addBook(book));
       setTitle('');
       setAuthor('');
@@ -36,7 +36,7 @@ const BookForm = () => {
     try {
       const res = await axios.get('http://localhost:4000/random-book');
       if (res?.data?.title && res?.data?.author) {
-        dispatch(addBook(createBookWithID(res.data)));
+        dispatch(addBook(createBookWithID(res.data, 'API')));
       }
       console.log(res);
     } catch (error) {
