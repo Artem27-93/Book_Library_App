@@ -8,6 +8,7 @@ import {
   selectOnlyFavouriteFilter,
   resetFilters,
 } from '../../redux/slices/filterSlice';
+import { resetAllBooks } from '../../redux/slices/booksSlice';
 import './Filter.css';
 
 const Filter = () => {
@@ -30,6 +31,10 @@ const Filter = () => {
 
   const handleResetFilters = () => {
     dispatch(resetFilters());
+  };
+
+  const handleResetAllBooks = () => {
+    dispatch(resetAllBooks());
   };
   return (
     <div className="app-block filter">
@@ -62,6 +67,9 @@ const Filter = () => {
         </div>
         <button type="button" onClick={handleResetFilters}>
           Reset Filters
+        </button>
+        <button type="button" className="red-btn" onClick={handleResetAllBooks}>
+          Reset All Books
         </button>
       </div>
     </div>

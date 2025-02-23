@@ -12,6 +12,17 @@ function getRandomBook() {
   return randomBook;
 }
 
+function getRandomBooks(num) {
+  const randomBooks = [];
+  for (let i = 0; i < num; i++) {
+    let randomIndex = Math.floor(Math.random() * booksData.length);
+    let randomBook = booksData[randomIndex];
+    randomBooks.push(randomBook);
+  }
+
+  return randomBooks;
+}
+
 app.get('/random-book', (req, res) => {
   res.json(getRandomBook());
 });
@@ -19,6 +30,12 @@ app.get('/random-book', (req, res) => {
 app.get('/random-book-delayed', (req, res) => {
   setTimeout(() => {
     res.json(getRandomBook());
+  }, 2000);
+});
+
+app.get('/random-number-books-delayed', (req, res) => {
+  setTimeout(() => {
+    res.json(getRandomBooks(5));
   }, 2000);
 });
 

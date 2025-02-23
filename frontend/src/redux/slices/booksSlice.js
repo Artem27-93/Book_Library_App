@@ -6,6 +6,7 @@ import { setError } from './errorSlice';
 const initialState = {
   books: [],
   isLoadingViaAPI: false,
+  isLoadingViaAPIMany: false,
 };
 
 export const fetchBook = createAsyncThunk(
@@ -20,6 +21,19 @@ export const fetchBook = createAsyncThunk(
       return thunkAPI.rejectWithValue(error);
       // Option 2
       // throw error;
+    }
+  }
+);
+
+export const fetchBooks = createAsyncThunk(
+  'books/fetchBooks',
+  async (url, thunkAPI) => {
+    try {
+      const res = await axios.get(url);
+      return res.data;
+    } catch (error) {
+      thunkAPI.dispatch(setError(error.message));
+      return thunkAPI.rejectWithValue(error);
     }
   }
 );
@@ -42,6 +56,9 @@ const booksSlice = createSlice({
         if (book.id === action.payload) book.isFavourite = !book.isFavourite;
       });
     },
+    resetAllBooks: (state, action) => {
+      return initialState;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchBook.pending, (state) => {
@@ -56,10 +73,30 @@ const booksSlice = createSlice({
     builder.addCase(fetchBook.rejected, (state) => {
       state.isLoadingViaAPI = false;
     });
+
+    //test
+    builder.addCase(fetchBooks.pending, (state) => {
+      state.isLoadingViaAPIMany = true;
+    });
+    builder.addCase(fetchBooks.fulfilled, (state, action) => {
+      state.isLoadingViaAPIMany = false;
+      console.log(action.payload);
+      action.payload.forEach((element) => {
+        if (element?.title && element?.author) {
+          state.books.push(createBookWithID(element, 'API'));
+        }
+      });
+    });
+    builder.addCase(fetchBooks.rejected, (state) => {
+      state.isLoadingViaAPIMany = false;
+    });
   },
 });
 
-export const { addBook, deleteBook, toggleFavourite } = booksSlice.actions;
+export const { addBook, deleteBook, toggleFavourite, resetAllBooks } =
+  booksSlice.actions;
 export const selectBooks = (state) => state.books.books;
 export const selectIsLoadingViaAPI = (state) => state.books.isLoadingViaAPI;
+export const selectIsLoadingViaAPIMany = (state) =>
+  state.books.isLoadingViaAPIMany;
 export default booksSlice.reducer;
